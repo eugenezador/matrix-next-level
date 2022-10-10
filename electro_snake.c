@@ -9,11 +9,13 @@ int input(int **matrix, int rows, int cols);
 
 void output(int **matrix, int rows, int cols);
 
-void horizontal_snake_sort(int **matrix, int rows, int cols, int **result);
+void horizontal_snake_sort(int* array, int** result, int rows, int cols);
 
-void vertical_snake_sort(int** matrix, int rows, int cols, int **result);
+void matrix_to_array(int** matirx, int rows, int cols, int* array);
 
-void matrix_sort(int** matrix, int rows, int cols);
+void vertical_snake_sort(int* array, int** result, int rows, int cols);
+
+void array_sort(int* array, int size);
 
 int main() {
 	int rows, cols;
@@ -31,13 +33,20 @@ int main() {
 					printf("Memory allocation error!");
 				}
 				else {
-					//matrix_sort(matrix, rows, cols);
-					printf("\n");
-					vertical_snake_sort(matrix, rows, cols, result);
-					output(result, rows, cols);
-					printf("\n");
-					horizontal_snake_sort(matrix, rows, cols, result);
-					output(result, rows, cols);
+					int *array = NULL;
+					array = (int*)malloc(rows * cols * sizeof(int));
+					if(array == NULL) {
+						printf("Memory allocation error");
+					} else {
+						matrix_to_array(matrix, rows, cols, array);
+						array_sort(array, rows * cols);
+						printf("\n");
+						vertical_snake_sort(array, result, rows, cols);
+						output(result, rows, cols);
+						printf("\n");
+						horizontal_snake_sort(array, result, rows, cols);
+						output(result, rows, cols);
+					}
 				}
 			}
 			else {
@@ -79,6 +88,7 @@ int input(int** matrix, int rows, int cols) {
 	}
 	return flag;
 }
+
 void output(int** matrix, int rows, int cols) {
 	for (int i = 0; i < rows; i++) {
 		printf("%d", matrix[i][0]);
@@ -89,57 +99,55 @@ void output(int** matrix, int rows, int cols) {
 	}
 }
 
-void horizontal_snake_sort(int** matrix, int rows, int cols, int** result) {
+void matrix_to_array(int** matrix, int rows, int cols, int* array) {
+    int k = 0;
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            array[k] = matrix[i][j];
+            k++;
+        }
+    }
+}
+
+void horizontal_snake_sort(int* array, int** result, int rows, int cols) {
+	int k = 0;
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
 			if (i % 2 == 0) {
-				result[i][j] = matrix[i][j];
+				result[i][j] = array[k];
+				k++;
 			}
 			else {
-				result[i][j] = matrix[i][cols - j - 1];
+				result[i][cols - j - 1] = array[k];
+				k++;
 			}
-			
 		}
 	}
 }
 
-void vertical_snake_sort(int** matrix, int rows, int cols, int** result) {
-	for (int j = 0; j < rows; j++) {
-		for (int i = 0; i < cols; i++) {
-			if (j % 2 == 0) {
-				result[i][j] = matrix[j][i];
-			}
-			else {
-				//result[i][j] = 0 /*matrix[i][cols - j - 1]*/;
-			}
-
-		}
-	}
+void vertical_snake_sort(int* array, int** result, int rows, int cols) {
+	int k = 0;
+    for(int j = 0; j < cols; j++) {
+        for(int i = 0; i < rows; i++) {
+            if(j  % 2 == 0) {
+                result[i][j] = array[k];
+                k++;
+            } else {
+                result[rows - i - 1][j] = array[k];
+                k++;
+            }
+        }
+    }
 }
 
-void matrix_sort(int** matrix, int rows, int cols) {
+void array_sort(int* array, int size) {
 	int tmp;
-	for (int k = 0; k < rows* cols; k++) {
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols - 1; j++) {
-				if (matrix[i][j] > matrix[i][j + 1]) {
-					tmp = matrix[i][j];
-					matrix[i][j] = matrix[i][j + 1];
-					matrix[i][j + 1] = tmp;
-				}
-			}
-		}
-
-		for (int x = 0; x < rows; x++)
-		{
-			for (int z = 0; z < cols - 1; z++)
-			{
-				if (matrix[z][x] > matrix[z][x + 1])
-				{
-					tmp = matrix[z][x];
-					matrix[z][x] = matrix[z][x + 1];
-					matrix[z][x + 1] = tmp;
-				}
+	for(int i = 0; i < size; i++) {
+		for(int j = 0; j < size - i - 1; j++){
+			if(array[j] > array[j + 1]) {
+				tmp = array[j];
+				array[j] = array[j + 1];
+				array[j + 1] = tmp;
 			}
 		}
 	}

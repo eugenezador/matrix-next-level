@@ -46,8 +46,11 @@ int main() {
 						printf("\n");
 						horizontal_snake_sort(array, result, rows, cols);
 						output(result, rows, cols);
+						free(array);
 					}
+					free(result);
 				}
+				free(matrix);
 			}
 			else {
 				printf("Matrix input error!");

@@ -64,8 +64,8 @@ void get_minor(int** matrix, int** minor, int size, int i_minor, int j_minor) {
     for(int j = 0; j < size; j++) {
       if (i != i_minor && j != j_minor)
       {
-        minor[rows][cols++] = matrix[i][j];
-        // cols++;
+        minor[rows][cols] = matrix[i][j];
+        cols++;
         if(cols == size -1) {
           cols = 0;
           rows++;

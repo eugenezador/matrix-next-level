@@ -1,109 +1,61 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-double det(double **matrix, int n);
-int input(double ***matrix, int *n, int *m);
-void output(double det);
-void free_mem_array_of_pointers(double **a, int n);
-void main() {
-  double **a;
-  int n, m;
-  if (input(&a, &n, &m)) {
-    if (n == m) {
-      printf("%lf", det(a, n));
-    } else {
-      printf("n/a");
+int matrix_size_input(int * rows, int *cols);
+int** memory_allocation(int**matrix, int size);
+int input_matrix(int** matrix, int size);
+void output(int** matrix, int size);
+
+int main() {
+  int rows, cols;
+  if(matrix_size_input(&rows, &cols)){
+    if(input_matrix()){
+
     }
+    
   } else {
-    printf("n/a");
+    printf("Matrix size input error!");
   }
-  for (int i = 0; i < n; i++) {
-    free(a[i]);
-  }
-  free(a);
+
+
+
+  return 0;
 }
 
-int input(double ***a, int *n, int *m) {
-  int flag = 1;
-  double x, res;
-  res = scanf("%lf", &x);
-  if (res == 1 && (int)x == x) {
-    *n = (int)x;
-  } else {
-    flag = 0;
+int matrix_size_input(int * rows, int *cols){
+  int flag = 0;
+  if(scanf("%d %d", rows, cols) == 2 && *rows == *cols) {
+    flag = 1;
   }
-  res = scanf("%lf", &x);
-  if (res == 1 && (int)x == x) {
-    *m = (int)x;
-  } else {
-    flag = 0;
-  }
-  if (flag) {
-    *a = (double **)malloc((*n) * sizeof(double *));
-    for (int i = 0; i < *n; i++) {
-      (*a)[i] = (double *)malloc((*m) * sizeof(double));
-    }
+  return flag;
+}
 
-    for (int i = 0; i < *n; i++) {
-      for (int j = 0; j < *m; j++) {
-        res = scanf("%lf", &x);
-        if (res == 1) {
-          (*a)[i][j] = x;
-        } else {
-          flag = 0;
-        }
+int** memory_allocation(int**matrix, int size){
+  matrix = malloc(size * sizeof(int*) + size * 2 * sizeof(int));
+  int* ptr = (int*)(matrix + size);
+  for(int i = 0; i < size; i++) {
+    matrix[i] = ptr + size * i;
+  }
+  return matrix;
+}
+
+int input_matrix(int** matrix, int size) {
+  int flag = 0;
+  for(int i = 0; i < size; i++) {
+    for(int j = 0; j < size; j++) {
+      if(scanf("%d", &matrix[i][j] == 1)){
+        flag = 1;
       }
     }
   }
   return flag;
 }
-
-void free_mem_array_of_pointers(double **a, int n) {
-  for (int i = 0; i < n; i++) {
-    free(a[i]);
-  }
-  free(a);
-}
-
-double **get_matrix(double **a, int n, int _i, int _j) {
-  double **tmp = (double **)malloc(n * sizeof(double *));
-  for (int i = 0; i < n; i++) {
-    tmp[i] = (double *)malloc(n * sizeof(double));
-  }
-  int x = 0, y = 0;
-  for (int i = 0; i <= n; i++) {
-    for (int j = 0; j <= n; j++) {
-      if (i != _i && j != _j) {
-        tmp[y][x] = a[i][j];
-        x++;
-        if (x == n) {
-          x = 0;
-          y++;
-        }
-      }
+void output(int** matrix, int size){
+  for(int i = 0; i < size; i++) {
+    printf("%d", matrix[i][0]);
+    for(int j = 1; j < size; j++) {
+      printf(" %d", matrix[i][j]);
     }
+    printf("\n");
   }
-  return tmp;
-}
-
-double det(double **a, int n) {
-  double sum = 0;
-  if (n == 1) {
-    sum = a[0][0];
-  } else if (n == 2) {
-    sum = (a[0][0] * a[1][1] - a[0][1] * a[1][0]);
-  } else {
-    int sign = 1;
-    for (int i = 0; i < n; i++) {
-      double **matrix;
-      matrix = get_matrix(a, n - 1, i, 0);
-      sum += sign * a[i][0] * det(matrix, n - 1);
-      sign = -sign;
-      for (int i = 0; i < n - 1; i++) {
-        free(matrix[i]);
-      }
-      free(matrix);
-    }
-  }
-  return sum;
 }

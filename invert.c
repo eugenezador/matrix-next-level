@@ -10,13 +10,11 @@ void get_minor(double** matrix, double** minor, int size, int i_minor, int j_min
 double det(double** matrix, int size);
 
 void transpose(double** matrix, int size, double** result);
-
 void multiply(double** matrix, int size, double number);
 
 void get_inverse_matrix(double** matrix, int size);
 
 int main() {
-
   int rows, cols;
   if(matrix_size_input(&rows, &cols)){
     double** matrix = NULL;
@@ -26,7 +24,7 @@ int main() {
     } else {
       if(input_matrix(matrix, rows)){
         if(det(matrix, rows)){
-          get_inverse_matrix(matrix, rows);
+           get_inverse_matrix(matrix, rows);
         } else {
           printf("Determinant is zero!");
         }
@@ -99,7 +97,7 @@ void get_minor(double** matrix, double** minor, int size, int i_minor, int j_min
 }
 
 double det(double** matrix, int size) {
-  int determinant = 0;
+  double determinant = 0;
   int znak = 1;
 
   if(size == 1) determinant = matrix[0][0];
@@ -115,7 +113,7 @@ double det(double** matrix, int size) {
             determinant += znak * matrix[0][j] * det(minor, size - 1);
             znak = -znak;
           }
-            free(minor);
+          free(minor);
         }
   }
 
@@ -139,6 +137,7 @@ void multiply(double** matrix, int size, double number){
 }
 
 void get_inverse_matrix(double** matrix, int size) {
+  int simbol = 1;
   double** main_minor_matrix = NULL;
   main_minor_matrix = memory_allocation(main_minor_matrix, size);
   if(main_minor_matrix == NULL) {
@@ -151,25 +150,27 @@ void get_inverse_matrix(double** matrix, int size) {
         } else {
           for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
-              get_minor(matrix, minor, size, i, j);
-              main_minor_matrix[i][j] = det(minor, size -1);
+                if ((i + j) % 2 == 0) simbol = 1;
+                else simbol = -1;
+                get_minor(matrix, minor, size, i, j);
+                main_minor_matrix[i][j] = simbol * det(minor, size -1);
             }
           }
 
         double** inverse = NULL;
-        inverse = memory_allocation(inverse, size -1);
+        inverse = memory_allocation(inverse, size);
         if(inverse == NULL) {
           printf("Memory allocation error!");
         } else {
 
           transpose(main_minor_matrix, size, inverse);
-          multiply(inverse, size, 1 / det(matrix, size));
+          multiply(inverse, size, (1./det(matrix, size)));
           output_matrix(inverse, size);
           free(inverse);
         }
-
+        
           free(minor);
-        }
+        } 
     free(main_minor_matrix);
   }
 }

@@ -42,7 +42,7 @@ int main() {
 
 int matrix_size_input(int * rows, int *cols){
   int flag = 0;
-  if(scanf("%d %d", rows, cols) == 2 && *rows == *cols) {
+  if(scanf("%d %d", rows, cols) == 2 && *rows == *cols && *rows > 0) {
     flag = 1;
   }
   return flag;
